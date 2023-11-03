@@ -1,0 +1,49 @@
+version: "3"
+services:
+  reverseproxy:
+    image: reverseproxy
+    ports:
+      - "8080:8080"
+    depends_on:
+      - udagram-db
+      - backend-user
+      - backend-feed
+  backend-user:
+    image: udagram-api-user
+    environment:
+      - POSTGRES_USERNAME=ynov
+      - POSTGRES_PASSWORD=ynov
+      - POSTGRES_DB=ynov
+      - POSTGRES_HOST=localhost
+      - POSTGRES_PORT=5432
+      - AWS_REGION=us-east-1
+      - AWS_PROFILE=default
+      - AWS_BUCKET=udagram-bucket-1234567
+      - JWT_SECRET=testing
+      - URL=http://localhost:8100
+    depends_on:
+      - udagram-db
+  backend-feed:
+    image: udagram-api-feed
+    environment:
+      - POSTGRES_USERNAME=ynov
+      - POSTGRES_PASSWORD=ynov
+      - POSTGRES_DB=ynov
+      - POSTGRES_HOST=localhost
+      - POSTGRES_PORT=5432
+      - AWS_REGION=us-east-1
+      - AWS_PROFILE=default
+      - AWS_BUCKET=udagram-bucket-1234567
+      - JWT_SECRET=testing
+      - URL=http://localhost:8100
+    depends_on:
+      - udagram-db
+  udagram-db:
+    image: postgres
+    environment:
+      - POSTGRES_PASSWORD=ynov
+      - POSTGRES_USER=ynov
+      - POSTGRES_DB=ynov
+
+networks:
+  udagram:
